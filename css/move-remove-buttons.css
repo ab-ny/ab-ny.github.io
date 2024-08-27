@@ -1,0 +1,45 @@
+
+.move-buttons {
+  display: flex;
+  position: relative;
+  left: -65px;
+}
+a.move-link, a.remove-link {
+  display: inline-block;
+  padding: 2px 5px;
+  border: 1px solid;
+  border-radius: 3px;
+  margin: 1px;
+  text-decoration: none;
+  text-align: center;
+  width: 30px;
+  height: 30px;
+}
+a.move-link {
+  border-color: #007BFF;
+  color: #007BFF;
+}
+a.move-link:hover {
+  background-color: #007BFF;
+  color: #FFF;
+}
+a.remove-link {
+  border-color: #FF0000;
+  color: #FF0000;
+}
+a.remove-link:hover {
+  background-color: #FF0000;
+  color: #FFFFFF;
+}
+.govuk-summary-list__row h2 {
+  margin: 0 10px;
+  flex: 1;
+}
+.remove-button{
+  margin: 20px 0;
+}
+h2 .remove-button {
+  float: right;
+  position: relative;
+  right: -35px;
+}

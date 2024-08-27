@@ -8,9 +8,11 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/custom.css" rel="stylesheet">
+
   <link rel="stylesheet" href="css/gov-uk-styles.css">
-  
+  <link rel="stylesheet" href="css/move-remove-buttons.css"> 
   <title>Summary builder</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -24,17 +26,29 @@
       <input type="text" id="section_name" name="section_name"><br>
       <br>
 
-      <button type = "button" onclick="add()">Add</button>
+      <button type="button" onclick="add()">Add</button>
     </fieldset>
-    <span id = "errors" style = "display: none;"></span>
+    <br>
+    <fieldset class="govuk-fieldset">
+      <label for="header_text">Header text:</label><br>
+      <input type="text" id="header_text" name="header_text"><br>
+      <br>
+
+      <button type="button" onclick="addHeader()">Add Header</button>
+    </fieldset>
+    <span id="errors" style="display: none;"></span>
     
     <script src="js/builder.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <h2>Preview</h2>
     <div id="preview" class="col-sm-12">
       
-      <dl class="govuk-summary-list">
+      <dl class="govuk-summary-list" >
         <div class="govuk-summary-list__row">
+          <div class="move-buttons">
+            <a class="move-link" href="#" title="Move Up">&#9650;</a>
+            <a class="move-link" href="#" title="Move Down">&#9660;</a>
+          </div>
           <dt class="govuk-summary-list__key">
             Please
           </dt>
@@ -46,10 +60,14 @@
               above <span class="govuk-visually-hidden"> CHANGEME</span>
             </a>
           </dd>
+          <div class="remove-button" style="margin-left: 10px;">
+            <a class="remove-link" href="#" title="Remove">&#128465;</a>
+          </div>
         </div>
-      </div>
-      <h2>Code</h2>
-      <textarea id = "copyme" onclick="this.select()" style = "width:100%; height:500px"></textarea>
+      </dl>
     </div>
-  </body>
-  </html>
+    <h2>Code</h2>
+    <textarea id="copyme" onclick="this.select()" style="width:100%; height:500px"></textarea>
+  </div>
+</body>
+</html>
