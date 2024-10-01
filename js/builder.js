@@ -187,9 +187,15 @@ function render() {
         </dd>
         </div>\n`;
       } else if (item.type === ItemType.Header) {
-        previewOutput += `
-        </dl>
-        <h2><span class="move-buttons">
+        if (i === 0) {
+          // special case - don't include blank dl
+          previewOutput = '';
+          window.output = '';
+        } else {
+          previewOutput += `</dl>`;
+          window.output += `</dl>`;
+        }
+        previewOutput +=`<h2><span class="move-buttons">
           <a class="move-link" href="#" data-action="move-up" data-index="${i}" title="Move Up">&#9650;</a>
           <a class="move-link" href="#" data-action="move-down" data-index="${i}" title="Move Down">&#9660;</a>
         </span>
@@ -200,8 +206,7 @@ function render() {
         <dl class="govuk-summary-list">
         \n`;
         
-        window.output += `</dl>
-        <h2>${item.text}</h2>
+        window.output += `<h2>${item.text}</h2>
         <dl class="govuk-summary-list">\n`;
       }
     }
