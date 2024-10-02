@@ -21,7 +21,16 @@ function display_condition_add(condition) {
 
 function display_condition_get_name(condition) {
   if (condition === "") { return ""; }
-  return "_dc_" + condition.replaceAll(" ","_").replaceAll("}","").replaceAll("{","").replaceAll("'","").replaceAll("icontains","").replaceAll("contains","").replaceAll(" ","").replaceAll("__","_");
+  return "_dc_" + condition.replaceAll(" ","_")
+    .replaceAll("}","")
+    .replaceAll("{","")
+    .replaceAll(")","")
+    .replaceAll("(","")
+    .replaceAll("'","")
+    .replaceAll("icontains","")
+    .replaceAll("contains","")
+    .replaceAll(" ","")
+    .replaceAll("__","_");
   
 }
 
