@@ -30,6 +30,8 @@ function display_condition_get_name(condition) {
     .replaceAll("icontains","")
     .replaceAll("contains","")
     .replaceAll(" ","")
+    .replaceAll(">","gt")
+    .replaceAll("<","lt")
     .replaceAll("__","_");
   
 }
