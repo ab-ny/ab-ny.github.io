@@ -1,4 +1,5 @@
 window.builder = [];
+window.display_conditions = [];
 window.output = "";
 
 const ItemType = {
@@ -10,29 +11,55 @@ function getNewID() {
   return self.crypto.randomUUID().slice(0, 8);
 }
 
+function display_condition_add(condition) {
+  if (condition === "") { return; }
+  if (window.display_conditions.indexOf(condition) === -1) {
+    window.display_conditions.push(condition);
+  }
+  
+}
+
+function display_condition_get_name(condition) {
+  if (condition === "") { return ""; }
+  return "_dc_" + condition.replaceAll(" ","_")
+    .replaceAll("}","")
+    .replaceAll("{","")
+    .replaceAll(")","")
+    .replaceAll("(","")
+    .replaceAll("'","")
+    .replaceAll("icontains","")
+    .replaceAll("contains","")
+    .replaceAll(" ","")
+    .replaceAll(">","gt")
+    .replaceAll("<","lt")
+    .replaceAll("__","_");
+  
+}
+
 function add() {
   window.errors = "";
   let friendly_name = $("#friendly_name").val();
   let data_name = $("#data_name").val();
   let section_name = $("#section_name").val();
-
+  let display_condition = $("#display_condition").val();
+  
   if (section_name === "") {
     section_name = friendly_name;
   }
-
+  
   if (friendly_name === "" || data_name === "" || section_name === "") {
     window.errors = "missing field";
     render();
     return;
   }
-
-
-
+  display_condition_add(display_condition);
+  
   const next = {
     "type": ItemType.Item,
     "field_name": friendly_name,
     "data_name": data_name,
     "section_name": section_name,
+    "display_condition": display_condition,
     "id": getNewID(),
   }
   window.builder.push(next);
@@ -42,13 +69,13 @@ function add() {
 
 function addHeader() {
   const headerText = $("#header_text").val();
-
+  
   if (headerText === "") {
     window.errors = "Header text is missing";
     render();
     return;
   }
-
+  
   const next = {
     "type": ItemType.Header,
     "text": headerText,
@@ -63,7 +90,7 @@ function moveUp(index) {
   if (index == 0) { 
     return;
   }
-
+  
   [window.builder[index], window.builder[index - 1]] = [window.builder[index - 1], window.builder[index]];
   render();  
 }
@@ -72,7 +99,7 @@ function moveDown(index) {
   if (index + 1 >= window.builder.length) {
     return;
   }
-
+  
   [window.builder[index], window.builder[index + 1]] = [window.builder[index + 1], window.builder[index]];
   render();  
 }
@@ -82,27 +109,61 @@ function remove(index) {
   render();
 }
 
+function render_display_conditions() {
+  if (window.display_conditions.length === 0) {
+    return;
+  }
+  let res = `<h2>Display conditions</h2>
+    <dl class="govuk-summary-list" >`
+  
+  for (let i = 0; i < window.display_conditions.length; i += 1) {
+    condition = window.display_conditions[i];
+    dc_name = display_condition_get_name(condition);
+    res += `<div class="govuk-summary-list__row">
+          <dt class="govuk-summary-list__key">
+            ${dc_name}
+          </dt>
+          <dd class="govuk-summary-list__value">
+            if(${condition},'','hidden')
+          </dd>
+    </div>`
+  }
+  
+  res+="</dl>";
+  
+  $("#display_conditions").css("display", "block").html(res);
+}
+
+function get_builder_display_condition(item) {
+  if (!item.display_condition) { return ""; }
+  if (item.display_condition !== "") {
+    return "{"+ display_condition_get_name(item.display_condition) + "}";
+  }
+  return "";
+}
+
 function render() {
   if (window.errors && window.errors !== "") {
     $("#errors").css("display", "block").html(window.errors);
   } else {
     $("#errors").css("display", "none");
   }
-
+  
   let previewOutput = "";
   window.output = "";
   const lb = "{";
   const rb = "}";
-
+  
   if (window.builder.length > 0) {
     previewOutput = `<dl class="govuk-summary-list">\n`;
     window.output = `<dl class="govuk-summary-list">\n`;
-
+    
     for (let i = 0; i < window.builder.length; i += 1) {
       const item = window.builder[i];
-
+      let display_cnd = get_builder_display_condition(item);
+      
       if (item.type === ItemType.Item) {
-        previewOutput += `  <div class="govuk-summary-list__row">
+        previewOutput += `  <div class="govuk-summary-list__row ${display_cnd}">
         <div class="move-buttons">
           <a class="move-link" href="#" data-action="move-up" data-index="${i}" title="Move Up">&#9650;</a>
           <a class="move-link" href="#" data-action="move-down" data-index="${i}" title="Move Down">&#9660;</a>
@@ -122,8 +183,8 @@ function render() {
           <a class="remove-link" href="#" data-action="remove" data-index="${i}" title="Remove">&#128465;</a>
         </div>
         </div>\n`;
-
-        window.output += `  <div class="govuk-summary-list__row">
+        
+        window.output += `  <div class="govuk-summary-list__row ${display_cnd}">
         <dt class="govuk-summary-list__key">
           ${item.field_name}
         </dt>
@@ -137,9 +198,15 @@ function render() {
         </dd>
         </div>\n`;
       } else if (item.type === ItemType.Header) {
-        previewOutput += `
-        </dl>
-        <h2><span class="move-buttons">
+        if (i === 0) {
+          // special case - don't include blank dl
+          previewOutput = '';
+          window.output = '';
+        } else {
+          previewOutput += `</dl>`;
+          window.output += `</dl>`;
+        }
+        previewOutput +=`<h2><span class="move-buttons">
           <a class="move-link" href="#" data-action="move-up" data-index="${i}" title="Move Up">&#9650;</a>
           <a class="move-link" href="#" data-action="move-down" data-index="${i}" title="Move Down">&#9660;</a>
         </span>
@@ -149,15 +216,14 @@ function render() {
         </div></h2>
         <dl class="govuk-summary-list">
         \n`;
-
-        window.output += `</dl>
-        <h2>${item.text}</h2>
+        
+        window.output += `<h2>${item.text}</h2>
         <dl class="govuk-summary-list">\n`;
       }
     }
     previewOutput += `</dl>\n`;
     window.output += `</dl>\n`;
-
+    
     previewOutput += `<script>\n`;
     window.output += `<script>\n`;
     for (let i = 0; i < window.builder.length; i += 1) {
@@ -181,11 +247,11 @@ function render() {
     previewOutput += `</script>`;
     window.output += `</script>`;
   }
-
+  
   $("#copyme").val(window.output);
-
+  
   $("#preview").html(previewOutput);
-
+  
   // Attach event listeners to move up, move down, and remove buttons
   $(".move-link").click(function (event) {
     event.preventDefault();
@@ -197,18 +263,19 @@ function render() {
       moveDown(index);
     }
   });
-
+  
   $(".remove-link").click(function (event) {
     event.preventDefault();
     const index = $(this).data("index");
     remove(index);
   });
-
+  
   if (window.builder.length > 0) {
     const script = document.createElement("script");
     script.innerHTML = previewOutput.match(/<script>([\s\S]*?)<\/script>/)[1];
     $("#preview")[0].appendChild(script);
   }
+  render_display_conditions();
 }
 
 function cls() {

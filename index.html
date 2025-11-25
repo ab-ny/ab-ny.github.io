@@ -24,6 +24,8 @@
       <input type="text" id="data_name" name="data_name"><br>
       <label for="section_name">Section name (if different to friendly name)</label><br>
       <input type="text" id="section_name" name="section_name"><br>
+      <label for="display_condition">Display condition (optional)</label><br>
+      <input type="text" id="display_condition" name="display_condition"><br>
       <br>
 
       <button type="button" onclick="add()">Add</button>
@@ -39,6 +41,7 @@
     <span id="errors" style="display: none;"></span>
     
     <script src="js/builder.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <h2>Preview</h2>
     <div id="preview" class="col-sm-12">
@@ -68,6 +71,7 @@
     </div>
     <h2>Code</h2>
     <textarea id="copyme" onclick="this.select()" style="width:100%; height:500px"></textarea>
-  </div>
+    <span id = "display_conditions">
+    </span>
 </body>
 </html>
